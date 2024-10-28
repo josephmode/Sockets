@@ -1,24 +1,13 @@
+const { Socket } = require('dgram');
 const express = require('express');
 const app = express();
-const https = require('https');
-const fs = require('fs');
-const path = require('path');
-const options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/sockete.ddns.net/privkey.pem'), // Ruta a tu clave privada
-    cert: fs.readFileSync('/etc/letsencrypt/live/sockete.ddns.net/fullchain.pem') // Ruta a tu certificado
-};
+const http = require('http').createServer(app);
+const port = process.env.PORT || 9002; // Puedes cambiar 3000 por el puerto que desees
+const path = require('path')
+const io = require('socket.io')(http);
 
-const server = https.createServer(options, app);
-//const io = require('socket.io')(server); // Asocia Socket.IO al servidor HTTPS
-const io = require('socket.io')(server, {
-  cors: {
-      origin: '*', // O la configuración de CORS que necesites
-      methods: ['GET', 'POST']
-  }
-});
-
-server.listen(9002, () => {
-    console.log('Servidor escuchando en el puerto 9002');
+http.listen(port, () => {
+  console.log(`Servidor escuchando en el puerto ${port}`);
 });
 
 // Escuchar cuando un cliente se conecta
