@@ -10,34 +10,23 @@ http.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
 });
 
-io.on('message', (data) => {
-  console.log('Mensaje recibido:', data);
+// Escuchar cuando un cliente se conecta
+io.on('connection', (socket) => {
+  console.log('Nuevo cliente conectado');
+
+  // Manejar evento 'message' enviado desde el cliente
+  socket.on('message', (data) => {
+    console.log('Mensaje recibido:', data);
+
+    // Enviar respuesta al cliente
+    socket.emit('response', `Servidor recibió: ${data}`);
+  });
+
+  // Escuchar desconexión del cliente
+  socket.on('disconnect', () => {
+    console.log('Cliente desconectado');
+  });
 });
-
-// io.on('connection', (socket) => {
-//   console.log('Un usuario se ha conectado');
-
-//   socket.on('start_talking', () => {
-//     socket.broadcast.emit('user_talking', socket.id);
-//   });
-
-//   socket.on('stop_talking', () => {
-//     socket.broadcast.emit('user_stopped_talking', socket.id);
-//   });
-
-//   socket.on('audio_stream', (audioData) => {
-//     socket.broadcast.emit('audio_stream', audioData);
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log('Un usuario se ha desconectado');
-//   });
-
-//   socket.on('message', (data) => {
-//     console.log('Mensaje recibido:', data);
-//   });
-
-// });
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
