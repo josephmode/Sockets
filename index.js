@@ -4,21 +4,6 @@ const express = require('express');
 const http = require('http').createServer(app);
 const path = require('path')
 const io = require('socket.io')(http);
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-const firebaseConfig = {
-  apiKey: "AIzaSyCnBHJBbEVmRoL00ud9Bp5V4DAT4K_5S0g",
-  authDomain: "pruebas-27523.firebaseapp.com",
-  projectId: "pruebas-27523",
-  storageBucket: "pruebas-27523.appspot.com",
-  messagingSenderId: "980858422543",
-  appId: "1:980858422543:web:df5cb34b8a552a4075ea7a",
-  measurementId: "G-998WS6E2EK"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
 io.on('connection', (socket) => {
   console.log('Un usuario se ha conectado');
