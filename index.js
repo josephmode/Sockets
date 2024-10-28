@@ -22,6 +22,10 @@ io.on('connection', (socket) => {
     socket.emit('response', `Servidor recibió: ${data}`);
   });
 
+  socket.on('connect_error', (error) => {
+    console.error('Error de conexión:', error);
+  });
+
   // Escuchar desconexión del cliente
   socket.on('disconnect', () => {
     console.log('Cliente desconectado');
