@@ -9,7 +9,13 @@ const options = {
 };
 
 const server = https.createServer(options, app);
-const io = require('socket.io')(server); // Asocia Socket.IO al servidor HTTPS
+//const io = require('socket.io')(server); // Asocia Socket.IO al servidor HTTPS
+const io = require('socket.io')(server, {
+  cors: {
+      origin: '*', // O la configuración de CORS que necesites
+      methods: ['GET', 'POST']
+  }
+});
 
 server.listen(9002, () => {
     console.log('Servidor escuchando en el puerto 9002');
