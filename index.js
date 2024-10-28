@@ -14,30 +14,30 @@ io.on('message', (data) => {
   console.log('Mensaje recibido:', data);
 });
 
-io.on('connection', (socket) => {
-  console.log('Un usuario se ha conectado');
+// io.on('connection', (socket) => {
+//   console.log('Un usuario se ha conectado');
 
-  socket.on('start_talking', () => {
-    socket.broadcast.emit('user_talking', socket.id);
-  });
+//   socket.on('start_talking', () => {
+//     socket.broadcast.emit('user_talking', socket.id);
+//   });
 
-  socket.on('stop_talking', () => {
-    socket.broadcast.emit('user_stopped_talking', socket.id);
-  });
+//   socket.on('stop_talking', () => {
+//     socket.broadcast.emit('user_stopped_talking', socket.id);
+//   });
 
-  socket.on('audio_stream', (audioData) => {
-    socket.broadcast.emit('audio_stream', audioData);
-  });
+//   socket.on('audio_stream', (audioData) => {
+//     socket.broadcast.emit('audio_stream', audioData);
+//   });
 
-  socket.on('disconnect', () => {
-    console.log('Un usuario se ha desconectado');
-  });
+//   socket.on('disconnect', () => {
+//     console.log('Un usuario se ha desconectado');
+//   });
 
-  socket.on('message', (data) => {
-    console.log('Mensaje recibido:', data);
-  });
+//   socket.on('message', (data) => {
+//     console.log('Mensaje recibido:', data);
+//   });
 
-});
+// });
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
