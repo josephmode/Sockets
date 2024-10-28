@@ -10,6 +10,10 @@ http.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
 });
 
+io.on('message', (data) => {
+  console.log('Mensaje recibido:', data);
+});
+
 io.on('connection', (socket) => {
   console.log('Un usuario se ha conectado');
 
