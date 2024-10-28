@@ -1,10 +1,15 @@
 const { Socket } = require('dgram');
 const express = require('express');
 const app = express();
-//const port = parseInt(process.env.PORT) || process.argv[3] || 8080;
 const http = require('http').createServer(app);
+const port = process.env.PORT || 3000; // Puedes cambiar 3000 por el puerto que desees
 const path = require('path')
 const io = require('socket.io')(http);
+
+http.listen(port, () => {
+  console.log(`Servidor escuchando en el puerto ${port}`);
+});
+
 
 io.on('connection', (socket) => {
   console.log('Un usuario se ha conectado');
@@ -31,21 +36,21 @@ io.on('connection', (socket) => {
 
 });
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'ejs');
+// app.set('views', path.join(__dirname, 'views'));
 
-app.get('/', (req, res) => {
-  res.render('index', { messages: [] }); // Inicialmente, la lista de mensajes está vacía
-});
+// app.get('/', (req, res) => {
+//   res.render('index', { messages: [] }); // Inicialmente, la lista de mensajes está vacía
+// });
 
-app.use(express.static(path.join(__dirname, 'public')))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs');
+// app.use(express.static(path.join(__dirname, 'public')))
+//   .set('views', path.join(__dirname, 'views'))
+//   .set('view engine', 'ejs');
 
-app.get('/', (req, res) => {
-  res.render('index');
-});
+// app.get('/', (req, res) => {
+//   res.render('index');
+// });
 
-app.get('/api', (req, res) => {
-  res.json({"msg": "Hello world"});
-});
+// app.get('/api', (req, res) => {
+//   res.json({"msg": "Hello world"});
+// });
