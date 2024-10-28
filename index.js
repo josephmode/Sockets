@@ -1,13 +1,35 @@
 const { Socket } = require('dgram');
 const express = require('express');
 const app = express();
-const http = require('http').createServer(app);
-const port = process.env.PORT || 9002; // Puedes cambiar 3000 por el puerto que desees
+const http = require('http');
+const https = require('https');
+const fs = require('fs');
+const options = {
+  key: fs.readFileSync('/etc/letsencrypt/live/sockete.ddns.net/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/sockete.ddns.net/fullchain.pem')
+};
+
+// Crea el servidor HTTPS
+const serverHttps = https.createServer(options, app);
+// Crea el servidor HTTP
+const serverHttp = http.createServer(app);
+
+//const port = process.env.PORT || 9002; // Puedes cambiar 3000 por el puerto que desees
 const path = require('path')
 const io = require('socket.io')(http);
 
-http.listen(port, () => {
-  console.log(`Servidor escuchando en el puerto ${port}`);
+
+serverHttp.on('request', (req, res) => {
+  res.writeHead(301, { 'Location': 'https://' + req.headers.host + req.url });
+  res.end();
+});
+
+serverHttps.listen(443, () => {
+  console.log('Servidor HTTPS escuchando en el puerto 443');
+});
+
+serverHttp.listen(80, () => {
+  console.log('Servidor HTTP escuchando en el puerto 80');
 });
 
 // Escuchar cuando un cliente se conecta
@@ -20,10 +42,6 @@ io.on('connection', (socket) => {
 
     // Enviar respuesta al cliente
     socket.emit('response', `Servidor recibió: ${data}`);
-  });
-
-  socket.on('connect_error', (error) => {
-    console.error('Error de conexión:', error);
   });
 
   // Escuchar desconexión del cliente
