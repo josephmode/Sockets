@@ -22,6 +22,13 @@ io.on('connection', (socket) => {
     socket.emit('response', `Servidor recibió: ${data}`);
   });
 
+  socket.on('audio', (audioData) => {
+    // Procesa los datos del audio (Uint8List)
+    // Por ejemplo, retransmite el audio a otros clientes
+    console.log('Recibiendo audio');
+    socket.broadcast.emit('audio', audioData);
+  });
+
   // Escuchar desconexión del cliente
   socket.on('disconnect', () => {
     console.log('Cliente desconectado');
