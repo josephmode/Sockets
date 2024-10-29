@@ -25,7 +25,7 @@ io.on('connection', (socket) => {
   socket.on('audio', (audioData) => {
     // Procesa los datos del audio (Uint8List)
     // Por ejemplo, retransmite el audio a otros clientes
-    console.log('Recibiendo audio');
+    console.log('Recibiendo audio de tamaño: ' + data.length);
     socket.broadcast.emit('audio', audioData);
   });
 
