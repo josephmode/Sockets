@@ -26,8 +26,9 @@ io.on('connection', (socket) => {
     // Asegúrate de que audioData es un Buffer o ArrayBuffer
     if (Buffer.isBuffer(audioData)) {
       socket.broadcast.emit('audio-stream', audioData);
-      console.log('data lenght:' + audioData.length);
-      console.log('audio recibido y reenviado a todos los clientes');
+      console.log('Received audio data:', audioData); // Imprime los datos completos para análisis
+      console.log('Data length:', audioData.length);
+      console.log('First 10 bytes:', audioData.slice(0, 10).toString('hex')); // Imprime los primeros bytes para inspeccionar el encabezado
     } else {
       console.log('Los datos de audio no son un Buffer.');
     }
