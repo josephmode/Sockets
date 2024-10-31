@@ -25,26 +25,7 @@ io.on('connection', (socket) => {
   socket.on('audio-stream', (audioData) => {
     // Asegúrate de que audioData es un Buffer o ArrayBuffer
     if (Buffer.isBuffer(audioData)) {
-      const header = audioData.slice(0, 44); // Suponiendo que el encabezado es de 44 bytes
-  
-      // Verificar el encabezado
-      console.log('Header:', header);
-      const riff = header.toString('ascii', 0, 4);
-      const wave = header.toString('ascii', 8, 12);
-      const audioFormat = header.readUInt16LE(20);
-      const numChannels = header.readUInt16LE(22);
-      const sampleRate = header.readUInt32LE(24);
-      const bitsPerSample = header.readUInt16LE(34);
-
-      console.log(`RIFF: ${riff}, WAVE: ${wave}, Format: ${audioFormat}, Channels: ${numChannels}, SampleRate: ${sampleRate}, BitsPerSample: ${bitsPerSample}`);
-  
-      if (riff === 'RIFF' && wave === 'WAVE' && audioFormat === 1 && numChannels === 1 && sampleRate === 44100 && bitsPerSample === 16) {
-        console.log('Audio es PCM16 WAV.');
-        // Procesar el audio
-        socket.broadcast.emit('audio-stream', audioData);
-      } else {
-        //console.log('El formato de audio no es PCM16 WAV.');
-      }
+      socket.broadcast.emit('audio-stream', audioData);
     } else {
       console.log('Los datos de audio no son un Buffer.');
     }
@@ -72,5 +53,5 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api', (req, res) => {
-  res.json({"msg": "Hello world"});
+  res.json({ "msg": "Hello world" });
 });
