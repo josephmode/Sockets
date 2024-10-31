@@ -23,10 +23,28 @@ io.on('connection', (socket) => {
   });
 
   socket.on('audio-stream', (audioData) => {
-    // Procesa los datos del audio (Uint8List)
-    // Por ejemplo, retransmite el audio a otros clientes
-    console.log('Recibiendo audio de tamaño: ' + audioData.length);
-    socket.broadcast.emit('audio-stream', audioData);
+    // Asegúrate de que audioData es un Buffer o ArrayBuffer
+    if (Buffer.isBuffer(audioData)) {
+      const header = audioData.slice(0, 44); // Suponiendo que el encabezado es de 44 bytes
+  
+      // Verificar el encabezado
+      const riff = header.toString('ascii', 0, 4);
+      const wave = header.toString('ascii', 8, 12);
+      const audioFormat = header.readUInt16LE(20);
+      const numChannels = header.readUInt16LE(22);
+      const sampleRate = header.readUInt32LE(24);
+      const bitsPerSample = header.readUInt16LE(34);
+  
+      if (riff === 'RIFF' && wave === 'WAVE' && audioFormat === 1 && numChannels === 1 && sampleRate === 44100 && bitsPerSample === 16) {
+        console.log('Audio es PCM16 WAV.');
+        // Procesar el audio
+        socket.broadcast.emit('audio-stream', audioData);
+      } else {
+        console.log('El formato de audio no es PCM16 WAV.');
+      }
+    } else {
+      console.log('Los datos de audio no son un Buffer.');
+    }
   });
 
   // Escuchar desconexión del cliente
