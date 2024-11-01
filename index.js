@@ -5,6 +5,7 @@ const http = require('http').createServer(app);
 const port = process.env.PORT || 9002; // Puedes cambiar 3000 por el puerto que desees
 const path = require('path')
 const io = require('socket.io')(http);
+const WavHeader = require('wav-header');
 
 http.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
@@ -23,12 +24,18 @@ io.on('connection', (socket) => {
   });
 
   socket.on('audio-stream', (audioData) => {
-    // Asegúrate de que audioData es un Buffer o ArrayBuffer
     if (Buffer.isBuffer(audioData)) {
-      socket.broadcast.emit('audio-stream', audioData);
-      console.log('Received audio data:', audioData); // Imprime los datos completos para análisis
-      console.log('Data length:', audioData.length);
-      console.log('First 10 bytes:', audioData.slice(0, 10).toString('hex')); // Imprime los primeros bytes para inspeccionar el encabezado
+      try {
+        const header = WavHeader.decode(audioData);
+        console.log('Audio format:', header.format);
+        console.log('Number of channels:', header.channels);
+        console.log('Sample rate:', header.sampleRate);
+        console.log('Bit depth:', header.bitsPerSample);
+        console.log('Duration (seconds):', audioData.length / (header.sampleRate * header.channels * header.bitsPerSample / 8));
+        socket.broadcast.emit('audio-stream', audioData);
+      } catch (error) {
+        console.error('Error al decodificar el audio:', error);
+      }
     } else {
       console.log('Los datos de audio no son un Buffer.');
     }
