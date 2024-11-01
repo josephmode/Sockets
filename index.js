@@ -26,10 +26,32 @@ io.on('connection', (socket) => {
     // Asegúrate de que audioData es un Buffer o ArrayBuffer
     if (Buffer.isBuffer(audioData)) {
       try {
-        socket.broadcast.emit('audio-stream', audioData);
-        console.log('Received audio data:', audioData); // Imprime los datos completos para análisis
-        console.log('Data length:', audioData.length);
-        console.log('First 10 bytes:', audioData.slice(0, 10).toString('hex')); // Imprime los primeros bytes para inspeccionar el encabezado
+        // Suponiendo un encabezado WAV de 44 bytes (ajusta según el formato)
+        const chunkId = audioData.toString('ascii', 0, 4);
+        const format = audioData.toString('ascii', 8, 12);
+        const subchunk1Size = audioData.readUInt32LE(16);
+        const audioFormat = audioData.readUInt16LE(20);
+        const numChannels = audioData.readUInt16LE(22);
+        const sampleRate = audioData.readUInt32LE(24);
+        const byteRate = audioData.readUInt32LE(28);
+        const blockAlign = audioData.readUInt16LE(32);
+        const bitsPerSample = audioData.readUInt16LE(34);
+
+        console.log('Chunk ID:', chunkId);
+        console.log('Format:', format);
+        console.log('Subchunk1Size:', subchunk1Size);
+        console.log('AudioFormat:', audioFormat);
+        console.log('NumChannels:', numChannels);
+        console.log('SampleRate:', sampleRate);
+        console.log('ByteRate:', byteRate);
+        console.log('BlockAlign:', blockAlign);
+        console.log('BitsPerSample:', bitsPerSample);
+
+
+        // socket.broadcast.emit('audio-stream', audioData);
+        // console.log('Received audio data:', audioData); // Imprime los datos completos para análisis
+        // console.log('Data length:', audioData.length);
+        // console.log('First 10 bytes:', audioData.slice(0, 10).toString('hex')); // Imprime los primeros bytes para inspeccionar el encabezado
       } catch (error) {
         console.error('Error al decodificar el audio:', error);
       }
