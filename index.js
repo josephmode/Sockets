@@ -26,7 +26,6 @@ io.on('connection', (socket) => {
     // Asegúrate de que audioData es un Buffer o ArrayBuffer
     if (Buffer.isBuffer(audioData)) {
       try {
-        const header = WavHeader.decode(audioData);
         socket.broadcast.emit('audio-stream', audioData);
         console.log('Received audio data:', audioData); // Imprime los datos completos para análisis
         console.log('Data length:', audioData.length);
