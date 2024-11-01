@@ -5,7 +5,6 @@ const http = require('http').createServer(app);
 const port = process.env.PORT || 9002; // Puedes cambiar 3000 por el puerto que desees
 const path = require('path')
 const io = require('socket.io')(http);
-const wavHeader = require('wav-header');
 
 http.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
@@ -26,8 +25,6 @@ io.on('connection', (socket) => {
   socket.on('audio-stream', (audioData) => {
     if (Buffer.isBuffer(audioData)) {
       try {
-        const decodedAudio = wavHeader.decode(audioData);
-        console.log('Audio decodificado:', decodedAudio);
         socket.broadcast.emit('audio-stream', audioData);
       } catch (error) {
         console.error('Error al decodificar el audio:', error);
