@@ -14,53 +14,12 @@ http.listen(port, () => {
 io.on('connection', (socket) => {
   console.log('Nuevo cliente conectado');
 
-  // Manejar evento 'message' enviado desde el cliente
-  socket.on('message', (data) => {
-    console.log('Mensaje recibido:', data);
-
-    // Enviar respuesta al cliente
-    socket.emit('response', `Servidor recibió: ${data}`);
+  // Enviar mensajes de señalización entre pares
+  socket.on('signal', (data) => {
+    console.log('Señal recibida:', data);
+    socket.broadcast.emit('signal', data); // Reenvía la señal a otros clientes
   });
 
-  socket.on('audio-stream', (audioData) => {
-    // Asegúrate de que audioData es un Buffer o ArrayBuffer
-    if (Buffer.isBuffer(audioData)) {
-      try {
-        // Suponiendo un encabezado WAV de 44 bytes (ajusta según el formato)
-        const chunkId = audioData.toString('ascii', 0, 4);
-        const format = audioData.toString('ascii', 8, 12);
-        const subchunk1Size = audioData.readUInt32LE(16);
-        const audioFormat = audioData.readUInt16LE(20);
-        const numChannels = audioData.readUInt16LE(22);
-        const sampleRate = audioData.readUInt32LE(24);
-        const byteRate = audioData.readUInt32LE(28);
-        const blockAlign = audioData.readUInt16LE(32);
-        const bitsPerSample = audioData.readUInt16LE(34);
-
-        console.log('Chunk ID:', chunkId);
-        console.log('Format:', format);
-        console.log('Subchunk1Size:', subchunk1Size);
-        console.log('AudioFormat:', audioFormat);
-        console.log('NumChannels:', numChannels);
-        console.log('SampleRate:', sampleRate);
-        console.log('ByteRate:', byteRate);
-        console.log('BlockAlign:', blockAlign);
-        console.log('BitsPerSample:', bitsPerSample);
-
-
-        // socket.broadcast.emit('audio-stream', audioData);
-        // console.log('Received audio data:', audioData); // Imprime los datos completos para análisis
-        // console.log('Data length:', audioData.length);
-        // console.log('First 10 bytes:', audioData.slice(0, 10).toString('hex')); // Imprime los primeros bytes para inspeccionar el encabezado
-      } catch (error) {
-        console.error('Error al decodificar el audio:', error);
-      }
-    } else {
-      console.log('Los datos de audio no son un Buffer.');
-    }
-  });
-
-  // Escuchar desconexión del cliente
   socket.on('disconnect', () => {
     console.log('Cliente desconectado');
   });
